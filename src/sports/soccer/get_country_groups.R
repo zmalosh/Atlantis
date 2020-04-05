@@ -16,7 +16,8 @@ getCountryGroups <- function(){
 							  	))
 	result <- countryGroups %>%
 		inner_join(countries, by = c('CountryCode'='CountryAbbr')) %>%
-		arrange(GroupPriority, CountryPriority, CountryName)
+		arrange(GroupPriority, CountryPriority, CountryName) %>%
+		select(GroupName, GroupPriority, CountryCode, CountryName, CountryPriority, FlagUrl)
 
 	return(result)
 }
