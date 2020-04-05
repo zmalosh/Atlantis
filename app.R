@@ -9,25 +9,17 @@
 
 library(shiny)
 
-# Define UI for application that draws a histogram
 ui <- fluidPage(
-
-	# Application title
-	titlePanel("Old Faithful Geyser Data"),
-
-	# Sidebar with a slider input for number of bins
-	sidebarLayout(
-		sidebarPanel(
-			sliderInput("bins",
-						"Number of bins:",
-						min = 1,
-						max = 50,
-						value = 30)
-		),
-
-		# Show a plot of the generated distribution
-		mainPanel(
-			plotOutput("distPlot")
+	titlePanel("Atlantis Intelligence"),
+	actionButton('reset_app', 'RESET APP'),
+	br(),
+	tabsetPanel(
+		tabPanel('League Selection',
+			mainPanel(
+				uiOutput('ddlCountry'),
+				textOutput('txtSelectedCountry'),
+				uiOutput('ddlLeague')
+			)
 		)
 	)
 )
@@ -35,14 +27,35 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
 
-	output$distPlot <- renderPlot({
-		# generate bins based on input$bins from ui.R
-		x    <- faithful[, 2]
-		bins <- seq(min(x), max(x), length.out = input$bins + 1)
+	notSelectedVal <- -1
 
-		# draw the histogram with the specified number of bins
-		hist(x, breaks = bins, col = 'darkgray', border = 'white')
+	appState <- reactiveValues()
+	appState$SelectedLeagueId <- NULL
+
+	source('src/sports/soccer/get_country_groups.R')
+
+	countryGroups <- get_country_groups() %>% arrange(GroupPriority, CountryPriority, CountryName)
+	countryDdlOptions <- c(notSelectedVal, as.list(countryGroups$CountryCode))
+	names(countryDdlOptions) <- c('Select Country...', as.list(paste(countryGroups$GroupName, '-', countryGroups$CountryName)))
+	appState$CountryOptions <- countryDdlOptions
+
+	output$ddlCountry <- renderUI({
+		selectInput('CountryCode', 'Countries', appState$CountryOptions)
 	})
+
+	observeEvent(input$CountryCode, {
+		appState$SelectedLeagueId <- NULL
+
+		if(is.null(input$CountryCode) || input$CountryCode == notSelectedVal){
+			appState$SelectedCountryCode <- NULL
+			output$ddlLeague <- NULL
+		}
+		appState$SelectedCountryCode <- input$CountryCode
+
+
+	})
+
+	output$txtSelectedCountry <- renderText(appState$SelectedCountryCode)
 }
 
 # Run the application
