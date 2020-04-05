@@ -2,7 +2,10 @@ GroupName, GroupPriority, CountryPriority, CountryCode
 Important,	1,	5,	NI
 Important,	1,	5,	BY
 Important,	1,	5,	RU
+Important,	1,	5,	ZA
+Important,	1,	5,	SA
 Europe,		2,	5,	ES
+Europe,		2,	5,	BY
 Europe,		2,	5,	RU
 Europe,		2,	5,	GB
 Europe,		2,	5,	FR
@@ -11,6 +14,7 @@ Europe,		2,	5,	AD
 Europe,		2,	5,	HR
 Europe,		2,	5,	PL
 Americas,	3,	5,	US
+Americas,	3,	5,	NI
 Americas,	3,	5,	BR
 Americas,	3,	5,	AR
 Americas,	3,	5,	GT
