@@ -1,5 +1,5 @@
 library(tidyverse)
-getCountryGroups <- function(){
+get_country_groups <- function(){
 	countries <- read_csv('data/soccer/countries.csv',
 						  col_types = cols(
 						  	CountryName = col_character(),
@@ -7,6 +7,7 @@ getCountryGroups <- function(){
 						  	FlagUrl = col_character(),
 						  	ApiFootballCountryName = col_character()
 						  ))
+
 	countryGroups <- read_csv('data/soccer/countryGroups.csv',
 							  col_types = cols(
 							  	GroupName = col_character(),
@@ -14,9 +15,9 @@ getCountryGroups <- function(){
 							  	CountryPriority = col_integer(),
 							  	CountryCode = col_character()
 							  	))
+
 	result <- countryGroups %>%
-		inner_join(countries, by = c('CountryCode'='CountryAbbr')) %>%
-		arrange(GroupPriority, CountryPriority, CountryName) %>%
+		inner_join(countries, by = c('CountryCode' = 'CountryAbbr')) %>%
 		select(GroupName, GroupPriority, CountryCode, CountryName, CountryPriority, FlagUrl)
 
 	return(result)
