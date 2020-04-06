@@ -18,7 +18,8 @@ ui <- fluidPage(
 			mainPanel(
 				uiOutput('ddlCountry'),
 				textOutput('txtSelectedCountry'),
-				uiOutput('ddlLeague')
+				uiOutput('ddlLeague'),
+				textOutput('txtSelectedLeagueId')
 			)
 		)
 	)
@@ -33,11 +34,14 @@ server <- function(input, output) {
 	appState$SelectedLeagueId <- NULL
 
 	source('src/sports/soccer/get_country_groups.R')
+	source('src/sports/soccer/get_all_competitions.R')
 
 	countryGroups <- get_country_groups() %>% arrange(GroupPriority, CountryPriority, CountryName)
 	countryDdlOptions <- c(notSelectedVal, as.list(countryGroups$CountryCode))
 	names(countryDdlOptions) <- c('Select Country...', as.list(paste(countryGroups$GroupName, '-', countryGroups$CountryName)))
 	appState$CountryOptions <- countryDdlOptions
+
+	allLeagues <- get_all_competitions()
 
 	output$ddlCountry <- renderUI({
 		selectInput('CountryCode', 'Countries', appState$CountryOptions)
@@ -48,14 +52,35 @@ server <- function(input, output) {
 
 		if(is.null(input$CountryCode) || input$CountryCode == notSelectedVal){
 			appState$SelectedCountryCode <- NULL
+			appState$LeagueOptions <- NULL
 			output$ddlLeague <- NULL
+		} else {
+			appState$SelectedCountryCode <- input$CountryCode
+
+			countryLeagues <- allLeagues %>%
+				filter(input$CountryCode == country_code & is_current == 1 & toupper(type) == 'LEAGUE') %>%
+				arrange(season, name)
+			leagueDdlOptions <- c(notSelectedVal, as.list(countryLeagues$league_id))
+			leagueDdlOptionNames <- c('Select League...', as.list(paste(countryLeagues$season, '-', countryLeagues$name)))
+			names(leagueDdlOptions) <- leagueDdlOptionNames
+			appState$LeagueOptions <- leagueDdlOptions
+
+			output$ddlLeague <- renderUI({
+				selectInput('LeagueId', 'Leagues', appState$LeagueOptions)
+			})
 		}
-		appState$SelectedCountryCode <- input$CountryCode
+	})
 
-
+	observeEvent(input$LeagueId, {
+		if(is.null(input$LeagueId)){
+			appState$SelectedLeagueId <- NULL
+		} else {
+			appState$SelectedLeagueId <- input$LeagueId
+		}
 	})
 
 	output$txtSelectedCountry <- renderText(appState$SelectedCountryCode)
+	output$txtSelectedLeagueId <- renderText(appState$SelectedLeagueId)
 }
 
 # Run the application
