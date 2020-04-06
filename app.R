@@ -19,7 +19,8 @@ ui <- fluidPage(
 				uiOutput('ddlCountry'),
 				textOutput('txtSelectedCountry'),
 				uiOutput('ddlLeague'),
-				textOutput('txtSelectedLeagueId')
+				textOutput('txtSelectedLeagueId'),
+				uiOutput('btnLoadGamesWrapper')
 			)
 		)
 	)
@@ -54,6 +55,7 @@ server <- function(input, output) {
 			appState$SelectedCountryCode <- NULL
 			appState$LeagueOptions <- NULL
 			output$ddlLeague <- NULL
+			output$btnLoadGamesWrapper <- NULL
 		} else {
 			appState$SelectedCountryCode <- input$CountryCode
 
@@ -72,10 +74,14 @@ server <- function(input, output) {
 	})
 
 	observeEvent(input$LeagueId, {
-		if(is.null(input$LeagueId)){
+		if(is.null(input$LeagueId) ||input$LeagueId == notSelectedVal){
 			appState$SelectedLeagueId <- NULL
+			output$btnLoadGamesWrapper <- NULL
 		} else {
 			appState$SelectedLeagueId <- input$LeagueId
+			output$btnLoadGamesWrapper <- renderUI({
+				actionButton('btnLoadGames', 'Load Games')
+			})
 		}
 	})
 
