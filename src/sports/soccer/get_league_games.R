@@ -1,4 +1,4 @@
-source('src/sports/soccer/get_games_by_league_id.R')
+source('src/sports/soccer/api/get_games_by_league_id.R')
 
 get_league_games <- function(leagueId){
 	if(is.null(leagueId)){

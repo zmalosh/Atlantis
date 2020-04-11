@@ -1,3 +1,6 @@
+source('src/sports/soccer/get_country_groups.R')
+source('src/sports/soccer/api/get_all_competitions.R')
+source('src/sports/soccer/api/get_games_by_league_id.R')
 
 competitionChooserUI <- function(id){
 	ns <- NS(id)
@@ -10,10 +13,6 @@ competitionChooserUI <- function(id){
 }
 
 competitionChooser <- function(input, output, session, appState){
-	source('src/sports/soccer/get_country_groups.R')
-	source('src/sports/soccer/get_all_competitions.R')
-	source('src/sports/soccer/get_games_by_league_id.R')
-
 	ns <- session$ns
 
 	notSelectedVal <- -1

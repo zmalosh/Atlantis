@@ -1,7 +1,7 @@
 source('requirements.R')
 
 get_api_football_json_from_url <- function(url){
-	key <- read_file('src/sports/soccer/api.key')
+	key <- read_file('src/sports/soccer/api/api.key')
 	headers <- c(key)
 	names(headers) <- 'X-RapidAPI-Key'
 
