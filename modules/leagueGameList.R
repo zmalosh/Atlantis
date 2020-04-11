@@ -11,7 +11,8 @@ leagueGameList <- function(input, output, session, appState){
 		if(is.null(appState$LeagueGames)){
 			output$dtGames <- NULL
 		} else {
-			output$dtGames <- DT::renderDataTable(appState$LeagueGames)
+			dtOptions <- list(lengthMenu = c(25, 50, 100, 500), pageLength = 500)
+			output$dtGames <- DT::renderDataTable(appState$LeagueGames, options = dtOptions)
 		}
 	})
 }
