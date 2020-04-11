@@ -5,8 +5,7 @@ competitionChooserUI <- function(id){
 	return(tagList(
 		uiOutput(ns('ddlCountry')),
 		uiOutput(ns('ddlLeague')),
-		uiOutput(ns('btnLoadGamesWrapper')),
-		dataTableOutput(ns('dtGames'))
+		uiOutput(ns('btnLoadGamesWrapper'))
 	))
 }
 
