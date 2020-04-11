@@ -5,7 +5,6 @@ leagueGameListUI <- function(id){
 	ns <- NS(id)
 
 	return (tagList(
-		uiOutput(ns('txtSelectedRound')),
 		uiOutput(ns('ddlLeagueRounds')),
 		dataTableOutput(ns('dtGames'))
 	))
@@ -30,8 +29,6 @@ leagueGameList <- function(input, output, session, appState){
 			} else {
 				appState$SelectedLeagueRound <- leagueRounds[1]
 			}
-
-			output$txtSelectedRound <- renderText(appState$SelectedLeagueRound)
 
 			output$ddlLeagueRounds <- renderUI({
 				selectInput(ns('LeagueRound'), 'Rounds', as.list(leagueRounds), selected = isolate(appState$SelectedLeagueRound))
