@@ -61,7 +61,7 @@ competitionChooser <- function(input, output, session, appState){
 	observeEvent(input$LeagueId, {
 		output$btnLoadGamesWrapper <- NULL
 		output$dtGames <- NULL
-		if(is.null(input$LeagueId) || input$LeagueId == notSelectedVal){
+		if(is.null(input$LeagueId) || input$LeagueId != appState$SelectedLeagueId){
 			appState$SelectedLeagueId <- NULL
 			appState$LeagueGames <- NULL
 		} else {
