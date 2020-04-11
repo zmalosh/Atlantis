@@ -48,7 +48,7 @@ competitionChooser <- function(input, output, session, appState){
 				filter(input$CountryCode == country_code & is_current == 1 & toupper(type) == 'LEAGUE') %>%
 				arrange(season, name)
 			leagueDdlOptions <- c(notSelectedVal, as.list(countryLeagues$league_id))
-			leagueDdlOptionNames <- c('Select League...', as.list(paste(countryLeagues$season, '-', countryLeagues$name)))
+			leagueDdlOptionNames <- c('Select League...', as.list(paste0(countryLeagues$season, ' - ', countryLeagues$name, ' (', countryLeagues$league_id, ')')))
 			names(leagueDdlOptions) <- leagueDdlOptionNames
 			appState$LeagueOptions <- leagueDdlOptions
 
