@@ -79,7 +79,9 @@ competitionChooser <- function(input, output, session, appState){
 			appState$LeagueGames <- NULL
 			output$dtGames <- NULL
 		} else {
-			rawGames <-get_games_by_league_id(appState$SelectedLeagueId)
+			rawGames <- get_games_by_league_id(appState$SelectedLeagueId)
+			currentRound <- get_current_round_by_league_id(appState$SelectedLeagueId)
+
 			leagueGames <- data.frame(
 				GameId = rawGames$fixture_id,
 				Round = rawGames$round,
@@ -91,7 +93,8 @@ competitionChooser <- function(input, output, session, appState){
 				stringsAsFactors = FALSE
 			)
 			appState$LeagueGames <- leagueGames
-			output$dtGames <- DT::renderDataTable(appState$LeagueGames)
+
+			appState$CurrentLeagueRound <- currentRound
 		}
 	})
 }
