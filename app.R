@@ -9,24 +9,7 @@
 
 library(shiny)
 source('modules/competitionChooser.R')
-
-gameViewerUI <- function(id){
-	ns <- NS(id)
-
-	return (tagList(
-		dataTableOutput(ns('dtGames'))
-	))
-}
-
-gameViewer <- function(input, output, session, appState){
-	observe({
-		if(is.null(appState$LeagueGames)){
-			output$dtGames <- NULL
-		} else {
-			output$dtGames <- DT::renderDataTable(appState$LeagueGames)
-		}
-	})
-}
+source('modules/leagueGameList.R')
 
 ui <- fluidPage(
 	titlePanel("Atlantis Intelligence"),
@@ -38,7 +21,7 @@ ui <- fluidPage(
 			competitionChooserUI('competitionChooserElement')
 		),
 		mainPanel(
-			gameViewerUI('gameViewerElement')
+			leagueGameListUI('leagueGameListElement')
 		)
 	)
 )
@@ -49,7 +32,7 @@ server <- function(input, output, session) {
 	appState$LeagueGames <- NULL
 
 	callModule(module = competitionChooser, id = 'competitionChooserElement', appState = appState)
-	callModule(module = gameViewer, id = 'gameViewerElement', appState = appState)
+	callModule(module = leagueGameList, id = 'leagueGameListElement', appState = appState)
 }
 
 # Run the application
