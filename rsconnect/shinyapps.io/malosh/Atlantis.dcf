@@ -5,8 +5,8 @@ account: malosh
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2100930
-bundleId: 3000897
+bundleId: 3000935
 url: https://malosh.shinyapps.io/Atlantis/
-when: 1586634667.44471
+when: 1586635454.70335
 asMultiple: FALSE
 asStatic: FALSE
