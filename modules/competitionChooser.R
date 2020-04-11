@@ -79,21 +79,11 @@ competitionChooser <- function(input, output, session, appState){
 			appState$LeagueGames <- NULL
 			output$dtGames <- NULL
 		} else {
-			rawGames <- get_games_by_league_id(appState$SelectedLeagueId)
+			rawGames <- get_league_games(isolate(appState$SelectedLeagueId))
+
 			currentRound <- get_current_round_by_league_id(appState$SelectedLeagueId)
 
-			leagueGames <- data.frame(
-				GameId = rawGames$fixture_id,
-				Round = rawGames$round,
-				GameDate = str_sub(rawGames$event_date, start = 1, end = 10),
-				HomeTeam = rawGames$homeTeam$team_name,
-				AwayTeam = rawGames$awayTeam$team_name,
-				HomeScore = rawGames$goalsHomeTeam,
-				AwayScore = rawGames$goalsAwayTeam,
-				stringsAsFactors = FALSE
-			)
 			appState$LeagueGames <- leagueGames
-
 			appState$CurrentLeagueRound <- currentRound
 		}
 	})
