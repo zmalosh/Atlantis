@@ -1,5 +1,6 @@
 source('src/sports/soccer/get_country_groups.R')
 source('src/sports/soccer/get_league_games.R')
+source('src/sports/soccer/get_league_standings.R')
 source('src/sports/soccer/api/get_all_competitions.R')
 
 competitionChooserUI <- function(id){
@@ -78,12 +79,13 @@ competitionChooser <- function(input, output, session, appState){
 			appState$LeagueGames <- NULL
 			output$dtGames <- NULL
 		} else {
-			rawGames <- get_league_games(isolate(appState$SelectedLeagueId))
-
 			currentRound <- get_current_round_by_league_id(appState$SelectedLeagueId)
+			rawGames <- get_league_games(isolate(appState$SelectedLeagueId))
+			rawStandings <- get_league_standings(isolate(appState$SelectedLeagueId))
 
-			appState$LeagueGames <- rawGames
 			appState$CurrentLeagueRound <- currentRound
+			appState$LeagueGames <- rawGames
+			appState$LeagueStandings <- rawStandings
 		}
 	})
 }

@@ -30,7 +30,8 @@ convert_from_raw_standings <- function(rawStandings) {
 		AwayGoalsAgainst = rawStandings$away$goalsAgainst,
 		GoalDifference = rawStandings$goalsDiff,
 		Points = rawStandings$points,
-		LastUpdate = rawStandings$lastUpdate
+		LastUpdate = rawStandings$lastUpdate,
+		stringsAsFactors = FALSE
 	)
 	return(df)
 }
@@ -47,4 +48,5 @@ get_league_standings <- function(leagueId){
 		}
 		convertedStandings <- NULL
 	}
+	return(standings)
 }
