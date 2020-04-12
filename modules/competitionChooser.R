@@ -82,7 +82,7 @@ competitionChooser <- function(input, output, session, appState){
 
 			currentRound <- get_current_round_by_league_id(appState$SelectedLeagueId)
 
-			appState$LeagueGames <- leagueGames
+			appState$LeagueGames <- rawGames
 			appState$CurrentLeagueRound <- currentRound
 		}
 	})
