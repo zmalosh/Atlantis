@@ -18,7 +18,8 @@ ui <- fluidPage(
 	br(),
 	sidebarLayout(
 		sidebarPanel(
-			competitionChooserUI('competitionChooserElement')
+			competitionChooserUI('competitionChooserElement'),
+			width = 3
 		),
 		mainPanel(
 			leagueGameListUI('leagueGameListElement')
