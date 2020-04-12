@@ -1,3 +1,5 @@
+library(tidyverse)
+library(SportPredictR)
 source('src/sports/soccer/api/get_games_by_league_id.R')
 
 get_league_games <- function(leagueId){
@@ -6,16 +8,31 @@ get_league_games <- function(leagueId){
 	}
 
 	rawGames <- get_games_by_league_id(leagueId)
-	gameTimes <- ymd_hms(rawGames$event_date) %>% with_tz('America/Detroit')
 
+	btPredictionModel <- SportPredictR::bradley_terry(gameIds =  rawGames$fixture_id,
+													  homeTeamIds = rawGames$homeTeam$team_name,
+													  awayTeamIds = rawGames$awayTeam$team_name,
+													  homeScores = ifelse(rawGames$status == 'Match Finished', rawGames$goalsHomeTeam, NA),
+													  awayScores = ifelse(rawGames$status == 'Match Finished', rawGames$goalsAwayTeam, NA),
+													  isNeutralSite = F)
+
+	btPredictions <- data.frame(rawGames['fixture_id'], btPredictionModel$predictGameByIds(rawGames$homeTeam$team_name, rawGames$awayTeam$team_name))
+
+	tempGames <- rawGames %>% inner_join(btPredictions, by = c('fixture_id' = 'fixture_id'))
+	gameTimes <- ymd_hms(tempGames$event_date) %>% with_tz('America/Detroit')
+
+	pctDecimalPlaces <- 2
 	leagueGames <- data.frame(
-		GameId = rawGames$fixture_id,
-		Round = rawGames$round,
+		GameId = tempGames$fixture_id,
+		Round = tempGames$round,
 		GameTime = format(gameTimes, '%Y-%m-%d %H:%M %Z'),
-		HomeTeam = rawGames$homeTeam$team_name,
-		AwayTeam = rawGames$awayTeam$team_name,
-		HomeScore = rawGames$goalsHomeTeam,
-		AwayScore = rawGames$goalsAwayTeam,
+		HomeTeam = tempGames$homeTeam$team_name,
+		AwayTeam = tempGames$awayTeam$team_name,
+		HomeScore = ifelse(tempGames$status == 'Match Finished', tempGames$goalsHomeTeam, NA),
+		AwayScore = ifelse(tempGames$status == 'Match Finished', tempGames$goalsAwayTeam, NA),
+		HomePct = format(round(tempGames$HomeWinPct * 100, pctDecimalPlaces), nsmall = pctDecimalPlaces),
+		DrawPct = format(round(tempGames$DrawWinPct * 100, pctDecimalPlaces), nsmall = pctDecimalPlaces),
+		AwayPct = format(round(tempGames$AwayWinPct * 100, pctDecimalPlaces), nsmall = pctDecimalPlaces),
 		stringsAsFactors = FALSE
 	)
 

@@ -1,6 +1,6 @@
 source('src/sports/soccer/get_country_groups.R')
+source('src/sports/soccer/get_league_games.R')
 source('src/sports/soccer/api/get_all_competitions.R')
-source('src/sports/soccer/api/get_games_by_league_id.R')
 
 competitionChooserUI <- function(id){
 	ns <- NS(id)

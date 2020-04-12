@@ -43,10 +43,12 @@ leagueGameList <- function(input, output, session, appState){
 	observe({
 		if(!is.null(appState$LeagueGames) && !is.null(appState$SelectedLeagueRound)){
 			if(appState$SelectedLeagueRound == allGamesVal){
-				appState$DisplayGames <- appState$LeagueGames
+				displayGames <- appState$LeagueGames
 			} else {
-				appState$DisplayGames <- appState$LeagueGames %>% filter(Round == appState$SelectedLeagueRound)
+				displayGames <- appState$LeagueGames %>% filter(Round == appState$SelectedLeagueRound)
 			}
+
+			appState$DisplayGames <- displayGames %>% select(-c(GameId, Round))
 
 			dtOptions <- list(lengthMenu = c(25, 50, 100, 500), pageLength = 500)
 			output$dtGames <- DT::renderDataTable(appState$DisplayGames, options = dtOptions)
