@@ -18,7 +18,7 @@ get_league_games <- function(leagueId){
 
 	btPredictions <- data.frame(rawGames['fixture_id'], btPredictionModel$predictGameByIds(rawGames$homeTeam$team_name, rawGames$awayTeam$team_name))
 
-	tempGames <- rawGames %>% inner_join(btPredictions, by = c('fixture_id' = 'fixture_id'))
+	tempGames <- rawGames %>% inner_join(btPredictions, by = c('fixture_id' = 'fixture_id')) %>% filter(rawGames$status != 'Match Postponed')
 	gameTimes <- ymd_hms(tempGames$event_date) %>% with_tz('America/Detroit')
 
 	pctDecimalPlaces <- 3
@@ -33,6 +33,8 @@ get_league_games <- function(leagueId){
 		AwayPct = format(round(tempGames$AwayWinPct, pctDecimalPlaces), nsmall = pctDecimalPlaces),
 		HomeScore = ifelse(tempGames$status == 'Match Finished', tempGames$goalsHomeTeam, NA),
 		AwayScore = ifelse(tempGames$status == 'Match Finished', tempGames$goalsAwayTeam, NA),
+		HomeTeamLogoUrl = tempGames$homeTeam$logo,
+		AwayTeamLogoUrl = tempGames$awayTeam$logo,
 		stringsAsFactors = FALSE
 	)
 

@@ -40,6 +40,7 @@ leagueGameList <- function(input, output, session, appState){
 		appState$SelectedLeagueRound <- input$LeagueRound
 	})
 
+	tableLogoHeight <- 20
 	observe({
 		if(!is.null(appState$LeagueGames) && !is.null(appState$SelectedLeagueRound)){
 			if(appState$SelectedLeagueRound == allGamesVal){
@@ -48,16 +49,19 @@ leagueGameList <- function(input, output, session, appState){
 				displayGames <- appState$LeagueGames %>% filter(Round == appState$SelectedLeagueRound)
 			}
 
-			appState$DisplayGames <- displayGames %>% select(-c(GameId, Round))
+			displayGames$HomeTeam <- paste0('<img src="', displayGames$HomeTeamLogoUrl, '" height="', tableLogoHeight, '" /><span>', displayGames$HomeTeam, '</span>')
+			displayGames$AwayTeam <- paste0('<img src="', displayGames$AwayTeamLogoUrl, '" height="', tableLogoHeight, '" /><span>', displayGames$AwayTeam, '</span>')
+
+			appState$DisplayGames <- displayGames %>% select(-c(GameId, Round, HomeTeamLogoUrl, AwayTeamLogoUrl))
 
 			dtOptions <- list(lengthMenu = c(25, 50, 100, 500), pageLength = 500)
-			dt <- datatable(appState$DisplayGames) %>%
+			dt <- datatable(appState$DisplayGames, escape = FALSE, options = dtOptions) %>%
 				formatStyle(c('HomePct', 'DrawPct', 'AwayPct'),
 							background = styleColorBar(range(c(0,1)), 'lightblue'),
 							backgroundSize = '98% 88%',
 							backgroundRepeat = 'no-repeat',
 							backgroundPosition = 'center')
-			output$dtGames <- DT::renderDataTable(dt, options = dtOptions)
+			output$dtGames <- DT::renderDataTable(dt)
 		}
 	})
 }
