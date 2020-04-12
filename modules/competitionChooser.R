@@ -86,6 +86,11 @@ competitionChooser <- function(input, output, session, appState){
 			appState$CurrentLeagueRound <- currentRound
 			appState$LeagueGames <- rawGames
 			appState$LeagueStandings <- rawStandings
+
+			countryGroupData <- countryGroups %>% filter(CountryCode == appState$SelectedCountryCode) %>% top_n(1)
+			leagueData <- allLeagues %>% filter(league_id == appState$SelectedLeagueId) %>% slice(1)
+			leagueDisplayHtml <- paste0('<span class="h3" style="background-color:#EEEEEE; padding: 5px; height: 60px; display:inline-block;"><img src="', leagueData$flag,'" height="50" />&nbsp;&nbsp;', leagueData$country,' - ', leagueData$season, ' ', leagueData$name, ' (', leagueData$season_start, ' to ', leagueData$season_end, ')</span>')
+			appState$LeagueTitleDisplayHtml <- leagueDisplayHtml
 		}
 	})
 }
