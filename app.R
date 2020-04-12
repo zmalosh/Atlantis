@@ -10,6 +10,7 @@
 library(shiny)
 source('modules/competitionChooser.R')
 source('modules/leagueGameList.R')
+source('modules/leagueStandings.R')
 
 ui <- fluidPage(
 	titlePanel("Atlantis Intelligence"),
@@ -20,7 +21,9 @@ ui <- fluidPage(
 			tabPanel('Games',
 				leagueGameListUI('leagueGameListElement')
 			),
-			tabPanel('Standings', 'asdf')
+			tabPanel('Standings',
+				leagueStandingsUI('leagueStandingsElement')
+			)
 		)
 	)
 )
@@ -36,6 +39,7 @@ server <- function(input, output, session) {
 
 	callModule(module = competitionChooser, id = 'competitionChooserElement', appState = appState)
 	callModule(module = leagueGameList, id = 'leagueGameListElement', appState = appState)
+	callModule(module = leagueStandings, id = 'leagueStandingsElement', appState = appState)
 
 }
 
