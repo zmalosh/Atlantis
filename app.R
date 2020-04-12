@@ -14,8 +14,6 @@ source('modules/leagueGameList.R')
 ui <- fluidPage(
 	titlePanel("Atlantis Intelligence"),
 	br(),
-	actionButton('reset_app', 'RESET APP'),
-	br(),
 	sidebarLayout(
 		sidebarPanel(
 			competitionChooserUI('competitionChooserElement'),
