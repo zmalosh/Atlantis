@@ -49,8 +49,12 @@ leagueGameList <- function(input, output, session, appState){
 				displayGames <- appState$LeagueGames %>% filter(Round == appState$SelectedLeagueRound)
 			}
 
-			displayGames$HomeTeam <- paste0('<img src="', displayGames$HomeTeamLogoUrl, '" height="', tableLogoHeight, '" /><span>', displayGames$HomeTeam, '</span>')
-			displayGames$AwayTeam <- paste0('<img src="', displayGames$AwayTeamLogoUrl, '" height="', tableLogoHeight, '" /><span>', displayGames$AwayTeam, '</span>')
+			displayGames$HomeTeam <- paste0('<span style="white-space:nowrap;"><img src="', displayGames$HomeTeamLogoUrl, '" height="', tableLogoHeight, '" />&nbsp;&nbsp;', displayGames$HomeTeam, '</span>')
+			displayGames$AwayTeam <- paste0('<span style="white-space:nowrap;"><img src="', displayGames$AwayTeamLogoUrl, '" height="', tableLogoHeight, '" />&nbsp;&nbsp;', displayGames$AwayTeam, '</span>')
+
+			displayGames$Score <- ifelse(is.na(displayGames$HomeScore), '', paste0(displayGames$HomeScore,'-',displayGames$AwayScore))
+			displayGames$HomeScore <- NULL
+			displayGames$AwayScore <- NULL
 
 			appState$DisplayGames <- displayGames %>% select(-c(GameId, Round, HomeTeamLogoUrl, AwayTeamLogoUrl))
 
