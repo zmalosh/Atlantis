@@ -54,8 +54,12 @@ leagueGameList <- function(input, output, session, appState){
 
 			appState$DisplayGames <- displayGames %>% select(-c(GameId, Round, HomeTeamLogoUrl, AwayTeamLogoUrl))
 
-			dtOptions <- list(lengthMenu = c(25, 50, 100, 500), pageLength = 500)
-			dt <- datatable(appState$DisplayGames, escape = FALSE, options = dtOptions) %>%
+			dtOptions <- list(lengthMenu = c(25, 50, 100, 500),
+							  pageLength = 500,
+							  ordering = appState$SelectedLeagueRound == allGamesVal,
+							  paging = appState$SelectedLeagueRound == allGamesVal,
+							  searching = appState$SelectedLeagueRound == allGamesVal)
+			dt <- datatable(appState$DisplayGames, escape = FALSE, options = dtOptions, rownames = FALSE) %>%
 				formatStyle(c('HomePct', 'DrawPct', 'AwayPct'),
 							background = styleColorBar(range(c(0,1)), 'lightblue'),
 							backgroundSize = '98% 88%',
