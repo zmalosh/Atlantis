@@ -13,25 +13,30 @@ source('modules/leagueGameList.R')
 
 ui <- fluidPage(
 	titlePanel("Atlantis Intelligence"),
+	competitionChooserUI('competitionChooserElement'),
 	br(),
-	sidebarLayout(
-		sidebarPanel(
-			competitionChooserUI('competitionChooserElement'),
-			width = 3
-		),
-		mainPanel(
-			leagueGameListUI('leagueGameListElement')
+	conditionalPanel(condition = 'output.ShowLeaguePanel',
+		tabsetPanel(id = 'tabsLeague',
+			tabPanel('Games',
+				leagueGameListUI('leagueGameListElement')
+			),
+			tabPanel('Standings', 'asdf')
 		)
 	)
 )
 
 
 server <- function(input, output, session) {
+
 	appState <- reactiveValues()
 	appState$LeagueGames <- NULL
 
+	output$ShowLeaguePanel <- reactive(!is.null(appState) && !is.null(appState$LeagueGames))
+	outputOptions(output, "ShowLeaguePanel", suspendWhenHidden = FALSE)
+
 	callModule(module = competitionChooser, id = 'competitionChooserElement', appState = appState)
 	callModule(module = leagueGameList, id = 'leagueGameListElement', appState = appState)
+
 }
 
 # Run the application

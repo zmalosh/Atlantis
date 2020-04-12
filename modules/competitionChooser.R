@@ -5,10 +5,10 @@ source('src/sports/soccer/api/get_all_competitions.R')
 competitionChooserUI <- function(id){
 	ns <- NS(id)
 
-	return(tagList(
-		uiOutput(ns('ddlCountry')),
-		uiOutput(ns('ddlLeague')),
-		uiOutput(ns('btnLoadGamesWrapper'))
+	return(fluidRow(
+		column(4, uiOutput(ns('ddlCountry'))),
+		column(4, uiOutput(ns('ddlLeague'))),
+		column(2, uiOutput(ns('btnLoadGamesWrapper')), style = "margin-top: 25px;")
 	))
 }
 
@@ -68,7 +68,7 @@ competitionChooser <- function(input, output, session, appState){
 		} else {
 			appState$SelectedLeagueId <- input$LeagueId
 			output$btnLoadGamesWrapper <- renderUI({
-				actionButton(ns('btnLoadGames'), 'Load Games')
+				actionButton(ns('btnLoadGames'), 'Load League')
 			})
 		}
 	})
