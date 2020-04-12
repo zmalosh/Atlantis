@@ -51,7 +51,13 @@ leagueGameList <- function(input, output, session, appState){
 			appState$DisplayGames <- displayGames %>% select(-c(GameId, Round))
 
 			dtOptions <- list(lengthMenu = c(25, 50, 100, 500), pageLength = 500)
-			output$dtGames <- DT::renderDataTable(appState$DisplayGames, options = dtOptions)
+			dt <- datatable(appState$DisplayGames) %>%
+				formatStyle(c('HomePct', 'DrawPct', 'AwayPct'),
+							background = styleColorBar(range(c(0,1)), 'lightblue'),
+							backgroundSize = '98% 88%',
+							backgroundRepeat = 'no-repeat',
+							backgroundPosition = 'center')
+			output$dtGames <- DT::renderDataTable(dt, options = dtOptions)
 		}
 	})
 }

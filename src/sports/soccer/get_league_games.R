@@ -21,18 +21,18 @@ get_league_games <- function(leagueId){
 	tempGames <- rawGames %>% inner_join(btPredictions, by = c('fixture_id' = 'fixture_id'))
 	gameTimes <- ymd_hms(tempGames$event_date) %>% with_tz('America/Detroit')
 
-	pctDecimalPlaces <- 2
+	pctDecimalPlaces <- 3
 	leagueGames <- data.frame(
 		GameId = tempGames$fixture_id,
 		Round = tempGames$round,
 		GameTime = format(gameTimes, '%Y-%m-%d %H:%M %Z'),
 		HomeTeam = tempGames$homeTeam$team_name,
 		AwayTeam = tempGames$awayTeam$team_name,
+		HomePct = format(round(tempGames$HomeWinPct, pctDecimalPlaces), nsmall = pctDecimalPlaces),
+		DrawPct = format(round(tempGames$DrawWinPct, pctDecimalPlaces), nsmall = pctDecimalPlaces),
+		AwayPct = format(round(tempGames$AwayWinPct, pctDecimalPlaces), nsmall = pctDecimalPlaces),
 		HomeScore = ifelse(tempGames$status == 'Match Finished', tempGames$goalsHomeTeam, NA),
 		AwayScore = ifelse(tempGames$status == 'Match Finished', tempGames$goalsAwayTeam, NA),
-		HomePct = format(round(tempGames$HomeWinPct * 100, pctDecimalPlaces), nsmall = pctDecimalPlaces),
-		DrawPct = format(round(tempGames$DrawWinPct * 100, pctDecimalPlaces), nsmall = pctDecimalPlaces),
-		AwayPct = format(round(tempGames$AwayWinPct * 100, pctDecimalPlaces), nsmall = pctDecimalPlaces),
 		stringsAsFactors = FALSE
 	)
 
