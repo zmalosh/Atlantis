@@ -2,3 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
+
+# Shiny IO Publish data
+*.dcf
