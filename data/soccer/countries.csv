@@ -1,5 +1,5 @@
-﻿CountryName,CountryAbbr,FlagUrl,ApiFootballCountryName
-World,NULL,NULL,World
+CountryName,CountryAbbr,FlagUrl,ApiFootballCountryName
+World,XX,NULL,World
 Andorra,AD,https://media.api-sports.io/flags/ad.svg,Andorra
 United-Arab-Emirates,AE,https://media.api-sports.io/flags/ae.svg,United-Arab-Emirates
 Albania,AL,https://media.api-sports.io/flags/al.svg,Albania
