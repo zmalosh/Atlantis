@@ -34,7 +34,7 @@ get_league_games <- function(leagueId){
 														  isNeutralSite = F)
 	gssdPredictions <- data.frame(rawGames['fixture_id'], gssdPredictionModel$predictGameByIds(rawGames$homeTeam$team_name, rawGames$awayTeam$team_name))
 
-	tempGames <- rawGames %>% inner_join(btPredictions, by = c('fixture_id' = 'fixture_id')) %>% filter(rawGames$status != 'Match Postponed')
+	tempGames <- rawGames %>% inner_join(gssdPredictions, by = c('fixture_id' = 'fixture_id')) %>% filter(rawGames$status != 'Match Postponed')
 	gameTimes <- ymd_hms(tempGames$event_date) %>% with_tz('America/Detroit')
 
 	pctDecimalPlaces <- 3
