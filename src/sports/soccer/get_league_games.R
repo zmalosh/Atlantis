@@ -24,7 +24,7 @@ get_league_games <- function(leagueId){
 														 homeScores = ifelse(rawGames$status == 'Match Finished', rawGames$goalsHomeTeam, NA),
 														 awayScores = ifelse(rawGames$status == 'Match Finished', rawGames$goalsAwayTeam, NA),
 														 isNeutralSite = F)
-	toorPredictions <- data.frame(rawGames['fixture_id'], olsPredictionModel$predictGameByIds(rawGames$homeTeam$team_name, rawGames$awayTeam$team_name))
+	toorPredictions <- data.frame(rawGames['fixture_id'], toorPredictionModel$predictGameByIds(rawGames$homeTeam$team_name, rawGames$awayTeam$team_name))
 
 	tempGames <- rawGames %>% inner_join(btPredictions, by = c('fixture_id' = 'fixture_id')) %>% filter(rawGames$status != 'Match Postponed')
 	gameTimes <- ymd_hms(tempGames$event_date) %>% with_tz('America/Detroit')
