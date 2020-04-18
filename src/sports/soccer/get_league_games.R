@@ -33,7 +33,7 @@ get_league_games <- function(leagueId){
 														  isNeutralSite = F)
 	gssdPredictions <- data.frame(rawGames['fixture_id'], gssdPredictionModel$predictGameByIds(rawGames$homeTeam$team_name, rawGames$awayTeam$team_name))
 
-	zsdPredictionModel <- SportPredictR::zScoreDev(gameIds =  rawGames$fixture_id,
+	zsdPredictionModel <- SportPredictR::z_score_dev(gameIds =  rawGames$fixture_id,
 														  homeTeamIds = rawGames$homeTeam$team_name,
 														  awayTeamIds = rawGames$awayTeam$team_name,
 														  homeScores = ifelse(rawGames$status == 'Match Finished', rawGames$goalsHomeTeam, NA),
@@ -41,7 +41,7 @@ get_league_games <- function(leagueId){
 														  isNeutralSite = F)
 	zsdPredictions <- data.frame(rawGames['fixture_id'], zsdPredictionModel$predictGameByIds(rawGames$homeTeam$team_name, rawGames$awayTeam$team_name))
 
-	prpPredictionModel <- SportPredictR::powerRank(gameIds =  rawGames$fixture_id,
+	prpPredictionModel <- SportPredictR::power_rank(gameIds =  rawGames$fixture_id,
 												   homeTeamIds = rawGames$homeTeam$team_name,
 												   awayTeamIds = rawGames$awayTeam$team_name,
 												   homeScores = ifelse(rawGames$status == 'Match Finished', rawGames$goalsHomeTeam, NA),
