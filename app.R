@@ -36,10 +36,10 @@ server <- function(input, output, session) {
 	appState <- reactiveValues()
 	appState$LeagueGames <- NULL
 
-	output$ShowLeaguePanel <- reactive(!is.null(appState) && !is.null(appState$LeagueGames))
+	output$ShowLeaguePanel <- reactive(!is.null(appState) && !is.null(appState$ShowLeaguePanel) && appState$ShowLeaguePanel)
 	outputOptions(output, "ShowLeaguePanel", suspendWhenHidden = FALSE)
 
-	output$ShowCompetitionChooser <- reactive(!is.null(appState) && (is.null(appState$SelectedLeagueId) || is.null(appState$LeagueGames)))
+	output$ShowCompetitionChooser <- reactive(!is.null(appState) && !is.null(appState$ShowCompetitionChooser) && appState$ShowCompetitionChooser)
 	outputOptions(output, "ShowCompetitionChooser", suspendWhenHidden = FALSE)
 
 	callModule(module = competitionChooser, id = 'competitionChooserElement', appState = appState)
@@ -47,6 +47,10 @@ server <- function(input, output, session) {
 	callModule(module = leagueStandings, id = 'leagueStandingsElement', appState = appState)
 
 	observe({
+		appState$ShowCompetitionChooser <- !is.null(appState) && (is.null(appState$SelectedLeagueId) || is.null(appState$LeagueGames))
+		appState$ShowLeaguePanel <- !is.null(appState) && !is.null(appState$LeagueGames)
+
+		# HTML TITLE
 		if(!is.null(appState) && !is.null(appState$LeagueGames) && !is.null(appState$LeagueTitleDisplayHtml)){
 			output$titleLeaguePanel <- renderUI(HTML(appState$LeagueTitleDisplayHtml))
 		}
