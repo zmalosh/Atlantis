@@ -14,7 +14,7 @@ source('modules/leagueStandings.R')
 
 ui <- fluidPage(
 	titlePanel("Atlantis Intelligence"),
-	conditionalPanel(condition='!output.IsLeagueLoaded',
+	conditionalPanel(condition='output.ShowCompetitionChooser',
 		competitionChooserUI('competitionChooserElement')
 	),
 	conditionalPanel(condition = 'output.ShowLeaguePanel',
@@ -39,8 +39,8 @@ server <- function(input, output, session) {
 	output$ShowLeaguePanel <- reactive(!is.null(appState) && !is.null(appState$LeagueGames))
 	outputOptions(output, "ShowLeaguePanel", suspendWhenHidden = FALSE)
 
-	output$IsLeagueLoaded <- reactive(!is.null(appState) && !is.null(appState$SelectedLeagueId) && !is.null(appState$LeagueGames))
-	outputOptions(output, "IsLeagueLoaded", suspendWhenHidden = FALSE)
+	output$ShowCompetitionChooser <- reactive(!is.null(appState) && (is.null(appState$SelectedLeagueId) || is.null(appState$LeagueGames)))
+	outputOptions(output, "ShowCompetitionChooser", suspendWhenHidden = FALSE)
 
 	callModule(module = competitionChooser, id = 'competitionChooserElement', appState = appState)
 	callModule(module = leagueGameList, id = 'leagueGameListElement', appState = appState)
