@@ -17,23 +17,22 @@ get_league_games <- function(leagueId){
 	allPreds <- predModel$predictByIds(rawGames$homeTeam$team_name, rawGames$awayTeam$team_name)
 	preds <- allPreds$pred
 
-	tempGames <- rawGames %>% inner_join(preds, by = c('fixture_id' = 'GameId')) %>% filter(rawGames$status != 'Match Postponed')
-	gameTimes <- ymd_hms(tempGames$event_date) %>% with_tz('America/Detroit')
+	gameTimes <- ymd_hms(rawGames$event_date) %>% with_tz('America/Detroit')
 
 	pctDecimalPlaces <- 3
 	leagueGames <- data.frame(
-		GameId = tempGames$fixture_id,
-		Round = tempGames$round,
+		GameId = rawGames$fixture_id,
+		Round = rawGames$round,
 		GameTime = format(gameTimes, '%Y-%m-%d %H:%M %Z'),
-		HomeTeam = tempGames$homeTeam$team_name,
-		AwayTeam = tempGames$awayTeam$team_name,
-		HomePct = format(round(tempGames$HomeWinPct, pctDecimalPlaces), nsmall = pctDecimalPlaces),
-		DrawPct = format(round(tempGames$DrawWinPct, pctDecimalPlaces), nsmall = pctDecimalPlaces),
-		AwayPct = format(round(tempGames$AwayWinPct, pctDecimalPlaces), nsmall = pctDecimalPlaces),
-		HomeScore = ifelse(tempGames$status == 'Match Finished', tempGames$goalsHomeTeam, NA),
-		AwayScore = ifelse(tempGames$status == 'Match Finished', tempGames$goalsAwayTeam, NA),
-		HomeTeamLogoUrl = tempGames$homeTeam$logo,
-		AwayTeamLogoUrl = tempGames$awayTeam$logo,
+		HomeTeam = rawGames$homeTeam$team_name,
+		AwayTeam = rawGames$awayTeam$team_name,
+		HomePct = format(round(preds$HomeWinPct, pctDecimalPlaces), nsmall = pctDecimalPlaces),
+		DrawPct = format(round(preds$DrawWinPct, pctDecimalPlaces), nsmall = pctDecimalPlaces),
+		AwayPct = format(round(preds$AwayWinPct, pctDecimalPlaces), nsmall = pctDecimalPlaces),
+		HomeScore = ifelse(rawGames$status == 'Match Finished', rawGames$goalsHomeTeam, NA),
+		AwayScore = ifelse(rawGames$status == 'Match Finished', rawGames$goalsAwayTeam, NA),
+		HomeTeamLogoUrl = rawGames$homeTeam$logo,
+		AwayTeamLogoUrl = rawGames$awayTeam$logo,
 		stringsAsFactors = FALSE
 	)
 
