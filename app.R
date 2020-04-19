@@ -36,11 +36,11 @@ server <- function(input, output, session) {
 	appState <- reactiveValues()
 	appState$LeagueGames <- NULL
 
-	output$ShowLeaguePanel <- reactive(!is.null(appState) && !is.null(appState$ShowLeaguePanel) && appState$ShowLeaguePanel)
-	outputOptions(output, "ShowLeaguePanel", suspendWhenHidden = FALSE)
-
 	output$ShowCompetitionChooser <- reactive(!is.null(appState) && !is.null(appState$ShowCompetitionChooser) && appState$ShowCompetitionChooser)
 	outputOptions(output, "ShowCompetitionChooser", suspendWhenHidden = FALSE)
+
+	output$ShowLeaguePanel <- reactive(!is.null(appState) && !is.null(appState$ShowLeaguePanel) && appState$ShowLeaguePanel)
+	outputOptions(output, "ShowLeaguePanel", suspendWhenHidden = FALSE)
 
 	callModule(module = competitionChooser, id = 'competitionChooserElement', appState = appState)
 	callModule(module = leagueGameList, id = 'leagueGameListElement', appState = appState)
