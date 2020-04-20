@@ -1,3 +1,5 @@
+source('requirements.R')
+source('src/sports/soccer/api/get_games_by_league_id.R')
 source('src/sports/soccer/get_country_groups.R')
 source('src/sports/soccer/get_league_games.R')
 source('src/sports/soccer/get_league_standings.R')
@@ -64,8 +66,7 @@ competitionChooser <- function(input, output, session, appState){
 		output$dtGames <- NULL
 		appState$LeagueGames <- NULL
 
-		if(is.null(input$LeagueId) || input$LeagueId == notSelectedVal)
-		{
+		if(is.null(input$LeagueId) || input$LeagueId == notSelectedVal){
 			appState$SelectedLeagueId <- NULL
 		} else {
 			appState$SelectedLeagueId <- input$LeagueId
@@ -84,8 +85,34 @@ competitionChooser <- function(input, output, session, appState){
 			rawGames <- get_league_games(isolate(appState$SelectedLeagueId))
 			rawStandings <- get_league_standings(isolate(appState$SelectedLeagueId))
 
+			ensemblePredModel <- SportPredictR::ensemble_model(gameIds =  rawGames$GameId,
+													   homeTeamIds = rawGames$HomeTeam,
+													   awayTeamIds = rawGames$AwayTeam,
+													   homeScores = rawGames$HomeScore,
+													   awayScores = rawGames$AwayScore,
+													   isNeutralSite = F)
+			allPreds <- ensemblePredModel$predictByIds(rawGames$HomeTeam, rawGames$AwayTeam)
+			preds <- allPreds$pred
+
+			pctDecimalPlaces <- 3
+			leagueGames <- data.frame(
+				GameId = rawGames$GameId,
+				Round = rawGames$Round,
+				GameTime = rawGames$GameTime,
+				HomeTeam = rawGames$HomeTeam,
+				AwayTeam = rawGames$AwayTeam,
+				HomePct = format(round(preds$HomeWinPct, pctDecimalPlaces), nsmall = pctDecimalPlaces),
+				DrawPct = format(round(preds$DrawWinPct, pctDecimalPlaces), nsmall = pctDecimalPlaces),
+				AwayPct = format(round(preds$AwayWinPct, pctDecimalPlaces), nsmall = pctDecimalPlaces),
+				HomeScore = rawGames$HomeScore,
+				AwayScore = rawGames$AwayScore,
+				HomeTeamLogoUrl = rawGames$HomeTeamLogoUrl,
+				AwayTeamLogoUrl = rawGames$AwayTeamLogoUrl,
+				stringsAsFactors = FALSE
+			)
+
 			appState$CurrentLeagueRound <- currentRound
-			appState$LeagueGames <- rawGames
+			appState$LeagueGames <- leagueGames
 			appState$LeagueStandings <- rawStandings
 
 			countryGroupData <- countryGroups %>% filter(CountryCode == appState$SelectedCountryCode) %>% top_n(1)
