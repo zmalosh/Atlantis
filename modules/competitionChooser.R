@@ -115,37 +115,33 @@ competitionChooser <- function(input, output, session, appState){
 			allPreds <- ensemblePredModel$predictByIds(rawGames$HomeTeam, rawGames$AwayTeam)
 			preds <- allPreds$pred
 
-			gameMoneyLines <- rawOdds %>%
-				filter(BetTypeName == 'Match Winner' & BookmakerName == appState$SelectedBookmaker$BookmakerName) %>%
-				pivot_wider(names_from = BetName, values_from = DecimalValue) %>%
-				transform(HomeMoneyLine = Home, DrawMoneyLine = Draw, AwayMoneyLine = Away) %>%
-				select(-c(Home, Draw, Away))
-			gameMoneyLines <- rawOdds %>%
-				filter(BetTypeName == 'Match Winner' & BookmakerName == 'Bovada') %>%
-				pivot_wider(names_from = BetName, values_from = DecimalValue) %>%
-				transform(HomeMoneyLine = as.numeric(Home), DrawMoneyLine = as.numeric(Draw), AwayMoneyLine = as.numeric(Away)) %>%
-				select(-c(Home, Draw, Away))
-			leagueGames <- rawGames %>% left_join(gameMoneyLines, by = 'GameId')
-
 			pctDecimalPlaces <- 3
 			leagueGames <- data.frame(
-				GameId = leagueGames$GameId,
-				Round = leagueGames$Round,
-				GameTime = leagueGames$GameTime,
-				HomeTeam = leagueGames$HomeTeam,
-				AwayTeam = leagueGames$AwayTeam,
+				GameId = rawGames$GameId,
+				Round = rawGames$Round,
+				GameTime = rawGames$GameTime,
+				HomeTeam = rawGames$HomeTeam,
+				AwayTeam = rawGames$AwayTeam,
 				HomePct = format(round(preds$HomeWinPct, pctDecimalPlaces), nsmall = pctDecimalPlaces),
 				DrawPct = format(round(preds$DrawWinPct, pctDecimalPlaces), nsmall = pctDecimalPlaces),
 				AwayPct = format(round(preds$AwayWinPct, pctDecimalPlaces), nsmall = pctDecimalPlaces),
-				HomeScore = leagueGames$HomeScore,
-				AwayScore = leagueGames$AwayScore,
-				HomeTeamLogoUrl = leagueGames$HomeTeamLogoUrl,
-				AwayTeamLogoUrl = leagueGames$AwayTeamLogoUrl,
-				HomeMoneyLine = leagueGames$HomeMoneyLine,
-				DrawMoneyLine = leagueGames$DrawMoneyLine,
-				AwayMoneyLine = leagueGames$AwayMoneyLine,
+				HomeScore = rawGames$HomeScore,
+				AwayScore = rawGames$AwayScore,
+				HomeTeamLogoUrl = rawGames$HomeTeamLogoUrl,
+				AwayTeamLogoUrl = rawGames$AwayTeamLogoUrl,
 				stringsAsFactors = FALSE
 			)
+
+			if(!is.null(rawOdds)){
+				gameMoneyLines <- rawOdds %>%
+					filter(BetTypeName == 'Match Winner' & BookmakerName == appState$SelectedBookmaker$BookmakerName) %>%
+					pivot_wider(names_from = BetName, values_from = DecimalValue) %>%
+					transform(HomeMoneyLine = as.numeric(Home), DrawMoneyLine = as.numeric(Draw), AwayMoneyLine = as.numeric(Away)) %>%
+					select(-c(Home, Draw, Away, BetTypeName, BookmakerName))
+				leagueGames <- leagueGames %>% left_join(gameMoneyLines, by = 'GameId')
+			} else {
+				leagueGames <- cbind(leagueGames, HomeMoneyLine = NA, DrawMoneyLine = NA, AwayMoneyLine = NA)
+			}
 
 			appState$CurrentLeagueRound <- currentRound
 			appState$LeagueGames <- leagueGames

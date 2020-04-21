@@ -40,6 +40,10 @@ get_league_odds <- function(leagueId){
 
 	rawOdds <- as.data.frame(get_odds_by_league_id(leagueId))
 
+	if(is.null(rawOdds) || nrow(rawOdds) == 0){
+		return (NULL)
+	}
+
 	result <- purrr::map_df(1:nrow(rawOdds$fixture), function(.x, r = rawOdds){
 		return(get_bet_values_from_fixture(r, .x))
 	})
