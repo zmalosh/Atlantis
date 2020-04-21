@@ -53,19 +53,22 @@ leagueGameList <- function(input, output, session, appState){
 			displayGames$AwayTeam <- paste0('<span style="white-space:nowrap;"><img src="', displayGames$AwayTeamLogoUrl, '" height="', tableLogoHeight, '" />&nbsp;&nbsp;', displayGames$AwayTeam, '</span>')
 
 
-			shinyInput <- function(FUN, len, id, ...) {
-				inputs <- character(len)
-				for (i in seq_len(len)) {
-					inputs[i] <- as.character(FUN(ns(paste0(id, i)), ...))
+			shinyInput <- function(ids, labels, ...) {
+				idCount <- length(ids)
+				inputs <- character(idCount)
+				for (i in 1:idCount) {
+					btnId <- ns(paste0('scoreButton_', ids[i]))
+					label <- labels[i]
+					inputs[i] <- as.character(actionButton(btnId, label = label, ...))
 				}
 				inputs
 			}
 
-			scoreDisplay <- ifelse(is.na(displayGames$HomeScore), '', paste0(displayGames$HomeScore,'-',displayGames$AwayScore))
+			scoreDisplay <- ifelse(is.na(displayGames$HomeScore), 'PREVIEW', paste0(displayGames$HomeScore,'-',displayGames$AwayScore))
 			displayGames$HomeScore <- NULL
 			displayGames$AwayScore <- NULL
-			gameCount <- nrow(displayGames)
-			displayGames$Score <- shinyInput(actionButton, gameCount, 'button_', label = 'Fire', onclick = paste0('Shiny.onInputChange(\"', ns('select_button') ,'\",  this.id)'))
+			btnScore_onClick <- paste0('Shiny.onInputChange(\"', ns('select_button') ,'\",  this.id)')
+			displayGames$Score <- shinyInput(displayGames$GameId, labels = scoreDisplay, onclick = btnScore_onClick)
 
 			appState$DisplayGames <- displayGames %>% select(-c(GameId, Round, HomeTeamLogoUrl, AwayTeamLogoUrl))
 
@@ -89,7 +92,6 @@ leagueGameList <- function(input, output, session, appState){
 	})
 
 	observeEvent(input$select_button, {
-		browser()
-		a <- 1
+		gameId <- stringr::str_split(input$select_button, '_')[[1]][2]
 	})
 }
