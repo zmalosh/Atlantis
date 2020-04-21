@@ -3,14 +3,21 @@ source('requirements.R')
 gameDetailsPanelUI <- function(id){
 	ns <- NS(id)
 
-	return(tabsetPanel(id = ns('tabsGameDetails'),
-					   tabPanel('Summary', 'Game Summary Goes Here'),
-					   tabPanel('Details', 'Go in depth here'))
-	)
+	return(tagList(
+		p(actionButton(inputId = ns('btnResetSelectedGameId'), label = 'RESET GAME')),
+		tabsetPanel(id = ns('tabsGameDetails'),
+			tabPanel('Summary', 'Game Summary Goes Here'),
+			tabPanel('Details', 'Go in depth here')
+		)
+	))
 }
 
 gameDetailsPanel <- function(input, output, session, appState){
 	ns <- session$ns
 
-	a <- 1
+	observeEvent(input$btnResetSelectedGameId, {
+		if(!is.null(appState)){
+			appState$SelectedGameId <- NULL
+		}
+	})
 }
