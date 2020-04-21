@@ -3,15 +3,18 @@ source('src/sports/soccer/api/get_games_by_league_id.R')
 source('src/sports/soccer/get_country_groups.R')
 source('src/sports/soccer/get_league_games.R')
 source('src/sports/soccer/get_league_standings.R')
+source('src/sports/soccer/get_bookmakers.R')
 source('src/sports/soccer/api/get_all_competitions.R')
 
 competitionChooserUI <- function(id){
 	ns <- NS(id)
 
-	return(fluidRow(
-		column(4, uiOutput(ns('ddlCountry'))),
-		column(4, uiOutput(ns('ddlLeague'))),
-		column(2, uiOutput(ns('btnLoadGamesWrapper')), style = "margin-top: 25px;")
+	return(tagList(
+		p(uiOutput(ns('ddlCountry')),
+		  uiOutput(ns('ddlLeague')),
+		  uiOutput(ns('btnLoadGamesWrapper')), style = "margin-top: 25px;"),
+		hr(),
+		p(uiOutput(ns('ddlBookmaker')))
 	))
 }
 
@@ -20,8 +23,24 @@ competitionChooser <- function(input, output, session, appState){
 
 	notSelectedVal <- -1
 	worldCountryCode <- 'XX'
+	defaultBookmaker <- 'Bovada'
 
 	appState$SelectedLeagueId <- NULL
+
+	bookmakers <- get_bookmakers() %>% arrange(BookmakerName)
+	bookmakerDdlOptions <- as.list(bookmakers$BookmakerName)
+	names(bookmakerDdlOptions) <- bookmakers$BookmakerName
+
+	appState$Bookmakers <- bookmakers
+	appState$SelectedBookmaker <- bookmakers %>% filter(BookmakerName == defaultBookmaker) %>% slice(1)
+
+	output$ddlBookmaker <- renderUI({
+		selectInput(ns('BookmakerName'), 'Bookmakers', bookmakerDdlOptions, selected = defaultBookmaker)
+	})
+
+	observeEvent(input$BookmakerName, {
+		appState$SelectedBookmaker <- bookmakers %>% filter(BookmakerName == input$BookmakerName) %>% slice(1)
+	})
 
 	countryGroups <- get_country_groups() %>% arrange(GroupPriority, CountryPriority, CountryName)
 	countryDdlOptions <- c(notSelectedVal, as.list(countryGroups$CountryCode))
