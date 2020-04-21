@@ -4,6 +4,7 @@ get_bookmakers <- function(){
 	iconPaths <- paste0('images/icon_', rawBookmakers$name %>% stringr::str_replace(' ', '') %>% tolower(), '.jpg')
 	bookmakers <- data.frame(BookmakerId = rawBookmakers$id,
 							 BookmakerName = rawBookmakers$name,
-							 BookmakerIconPath = iconPaths)
+							 BookmakerIconPath = iconPaths,
+							 stringsAsFactors = FALSE)
 	return(bookmakers)
 }
