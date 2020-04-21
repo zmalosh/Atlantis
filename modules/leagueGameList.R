@@ -92,5 +92,6 @@ leagueGameList <- function(input, output, session, appState){
 
 	observeEvent(input$select_button, {
 		gameId <- stringr::str_split(input$select_button, '_')[[1]][2]
+		appState$SelectedGameId <- gameId
 	})
 }
