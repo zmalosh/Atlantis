@@ -51,7 +51,7 @@ leagueGameList <- function(input, output, session, appState){
 
 			displayGames$HomeTeam <- paste0('<span style="white-space:nowrap;"><img src="', displayGames$HomeTeamLogoUrl, '" height="', tableLogoHeight, '" />&nbsp;&nbsp;', displayGames$HomeTeam, '</span>')
 			displayGames$AwayTeam <- paste0('<span style="white-space:nowrap;"><img src="', displayGames$AwayTeamLogoUrl, '" height="', tableLogoHeight, '" />&nbsp;&nbsp;', displayGames$AwayTeam, '</span>')
-
+			displayGames$ML <- ifelse(is.na(displayGames$HomeMoneyLine) & is.na(displayGames$HomeMoneyLine), '', paste0('<img src="', appState$SelectedBookmaker$BookmakerIconPath,'" height="', tableLogoHeight, '" title="H:', displayGames$HomeMoneyLine, '&nbsp;D:', displayGames$DrawMoneyLine, '&nbsp;A:', displayGames$AwayMoneyLine, '" />'))
 
 			shinyInput <- function(ids, labels, ...) {
 				idCount <- length(ids)
@@ -64,10 +64,10 @@ leagueGameList <- function(input, output, session, appState){
 				inputs
 			}
 
-			scoreDisplay <- ifelse(is.na(displayGames$HomeScore), 'PREVIEW', paste0(displayGames$HomeScore,'-',displayGames$AwayScore))
+			scoreDisplay <- ifelse(is.na(displayGames$HomeScore), 'PRE', paste0(displayGames$HomeScore,'-',displayGames$AwayScore))
 			btnScore_onClick <- paste0('Shiny.onInputChange(\"', ns('select_button') ,'\",  this.id)')
 			displayGames$Score <- shinyInput(displayGames$GameId, labels = scoreDisplay, onclick = btnScore_onClick)
-			displayGames <- displayGames %>% select(c(GameTime, Score, HomeTeam, AwayTeam, HomePct, DrawPct, AwayPct))
+			displayGames <- displayGames %>% select(c(GameTime, Score, HomeTeam, AwayTeam, ML, HomePct, DrawPct, AwayPct))
 
 			appState$DisplayGames <- displayGames
 

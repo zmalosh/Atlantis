@@ -3,6 +3,7 @@ source('src/sports/soccer/api/get_games_by_league_id.R')
 source('src/sports/soccer/get_country_groups.R')
 source('src/sports/soccer/get_league_games.R')
 source('src/sports/soccer/get_league_standings.R')
+source('src/sports/soccer/get_league_odds.R')
 source('src/sports/soccer/get_bookmakers.R')
 source('src/sports/soccer/api/get_all_competitions.R')
 
@@ -103,6 +104,7 @@ competitionChooser <- function(input, output, session, appState){
 			currentRound <- get_current_round_by_league_id(appState$SelectedLeagueId)
 			rawGames <- get_league_games(isolate(appState$SelectedLeagueId))
 			rawStandings <- get_league_standings(isolate(appState$SelectedLeagueId))
+			rawOdds <- get_league_odds(isolate(appState$SelectedLeagueId))
 
 			ensemblePredModel <- SportPredictR::ensemble_model(gameIds =  rawGames$GameId,
 													   homeTeamIds = rawGames$HomeTeam,
@@ -113,26 +115,42 @@ competitionChooser <- function(input, output, session, appState){
 			allPreds <- ensemblePredModel$predictByIds(rawGames$HomeTeam, rawGames$AwayTeam)
 			preds <- allPreds$pred
 
+			gameMoneyLines <- rawOdds %>%
+				filter(BetTypeName == 'Match Winner' & BookmakerName == appState$SelectedBookmaker$BookmakerName) %>%
+				pivot_wider(names_from = BetName, values_from = DecimalValue) %>%
+				transform(HomeMoneyLine = Home, DrawMoneyLine = Draw, AwayMoneyLine = Away) %>%
+				select(-c(Home, Draw, Away))
+			gameMoneyLines <- rawOdds %>%
+				filter(BetTypeName == 'Match Winner' & BookmakerName == 'Bovada') %>%
+				pivot_wider(names_from = BetName, values_from = DecimalValue) %>%
+				transform(HomeMoneyLine = as.numeric(Home), DrawMoneyLine = as.numeric(Draw), AwayMoneyLine = as.numeric(Away)) %>%
+				select(-c(Home, Draw, Away))
+			leagueGames <- rawGames %>% left_join(gameMoneyLines, by = 'GameId')
+
 			pctDecimalPlaces <- 3
 			leagueGames <- data.frame(
-				GameId = rawGames$GameId,
-				Round = rawGames$Round,
-				GameTime = rawGames$GameTime,
-				HomeTeam = rawGames$HomeTeam,
-				AwayTeam = rawGames$AwayTeam,
+				GameId = leagueGames$GameId,
+				Round = leagueGames$Round,
+				GameTime = leagueGames$GameTime,
+				HomeTeam = leagueGames$HomeTeam,
+				AwayTeam = leagueGames$AwayTeam,
 				HomePct = format(round(preds$HomeWinPct, pctDecimalPlaces), nsmall = pctDecimalPlaces),
 				DrawPct = format(round(preds$DrawWinPct, pctDecimalPlaces), nsmall = pctDecimalPlaces),
 				AwayPct = format(round(preds$AwayWinPct, pctDecimalPlaces), nsmall = pctDecimalPlaces),
-				HomeScore = rawGames$HomeScore,
-				AwayScore = rawGames$AwayScore,
-				HomeTeamLogoUrl = rawGames$HomeTeamLogoUrl,
-				AwayTeamLogoUrl = rawGames$AwayTeamLogoUrl,
+				HomeScore = leagueGames$HomeScore,
+				AwayScore = leagueGames$AwayScore,
+				HomeTeamLogoUrl = leagueGames$HomeTeamLogoUrl,
+				AwayTeamLogoUrl = leagueGames$AwayTeamLogoUrl,
+				HomeMoneyLine = leagueGames$HomeMoneyLine,
+				DrawMoneyLine = leagueGames$DrawMoneyLine,
+				AwayMoneyLine = leagueGames$AwayMoneyLine,
 				stringsAsFactors = FALSE
 			)
 
 			appState$CurrentLeagueRound <- currentRound
 			appState$LeagueGames <- leagueGames
 			appState$LeagueStandings <- rawStandings
+			appState$LeagueOdds <- rawOdds
 			appState$LeaguePredModel <- ensemblePredModel
 
 			countryGroupData <- countryGroups %>% filter(CountryCode == appState$SelectedCountryCode) %>% top_n(1)
