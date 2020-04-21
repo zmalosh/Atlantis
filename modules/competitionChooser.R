@@ -114,6 +114,7 @@ competitionChooser <- function(input, output, session, appState){
 			appState$CurrentLeagueRound <- currentRound
 			appState$LeagueGames <- leagueGames
 			appState$LeagueStandings <- rawStandings
+			appState$LeaguePredModel <- ensemblePredModel
 
 			countryGroupData <- countryGroups %>% filter(CountryCode == appState$SelectedCountryCode) %>% top_n(1)
 			leagueData <- allLeagues %>% filter(league_id == appState$SelectedLeagueId) %>% slice(1)
