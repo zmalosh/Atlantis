@@ -65,12 +65,11 @@ leagueGameList <- function(input, output, session, appState){
 			}
 
 			scoreDisplay <- ifelse(is.na(displayGames$HomeScore), 'PREVIEW', paste0(displayGames$HomeScore,'-',displayGames$AwayScore))
-			displayGames$HomeScore <- NULL
-			displayGames$AwayScore <- NULL
 			btnScore_onClick <- paste0('Shiny.onInputChange(\"', ns('select_button') ,'\",  this.id)')
 			displayGames$Score <- shinyInput(displayGames$GameId, labels = scoreDisplay, onclick = btnScore_onClick)
+			displayGames <- displayGames %>% select(c(GameTime, Score, HomeTeam, AwayTeam, HomePct, DrawPct, AwayPct))
 
-			appState$DisplayGames <- displayGames %>% select(-c(GameId, Round, HomeTeamLogoUrl, AwayTeamLogoUrl))
+			appState$DisplayGames <- displayGames
 
 			dtOptions <- list(lengthMenu = c(25, 50, 100, 500),
 							  pageLength = 500,
