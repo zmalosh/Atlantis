@@ -76,7 +76,7 @@ gameDetailsPanel <- function(input, output, session, appState){
 		} else {
 			showTab(inputId = ns('tabsGameDetails'), target = 'Predictions')
 			output$numHomeSpread <- renderUI({
-				sliderInput(ns('HomeSpread'), 'Home Spread', min = -5, max = 5, step = 0.5, value = 0)
+				sliderInput(ns('HomeSpread'), paste0(appState$SelectedHomeTeam, ' Spread'), min = -5, max = 5, step = 0.5, value = 0)
 			})
 		}
 	})
