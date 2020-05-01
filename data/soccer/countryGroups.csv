@@ -2,6 +2,7 @@ GroupName, GroupPriority, CountryPriority, CountryCode
 Important,	1,	4,	NI
 Important,	1,	4,	BY
 Important,	1,	4,	ES
+Important,	1,	4,	TJ
 Important,	1,	5,	RU
 Important,	1,	5,	SA
 Important,	1,	5,	XX
@@ -24,3 +25,4 @@ Africa,		4,	5,	AO
 Africa,		4,	5,	KE
 Asia,		5,	5,	HK
 Asia,		5,	5,	SA
+Asia,		5,	5,	TJ
