@@ -9,7 +9,7 @@ get_league_odds <- function(leagueId){
 			GameId = gameId,
 			BookmakerName = bookmakerName,
 			BetTypeName = betLabelName,
-			BetName = currentBetValues$value,
+			BetName = as.character(currentBetValues$value),
 			DecimalValue = currentBetValues$odd,
 			stringsAsFactors = FALSE
 		)
