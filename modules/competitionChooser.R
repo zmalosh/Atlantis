@@ -1,6 +1,5 @@
 source('requirements.R')
 source('src/sports/sport_controller_factory.R')
-source('src/sports/soccer/api/get_all_competitions.R')
 
 competitionChooserUI <- function(id){
 	ns <- NS(id)
@@ -51,7 +50,7 @@ competitionChooser <- function(input, output, session, appState){
 		names(countryDdlOptions) <- c('Select Country...', as.list(paste(countryGroups$GroupName, '-', countryGroups$CountryName)))
 		appState$CountryOptions <- countryDdlOptions
 
-		appState$AllLeagues <- get_all_competitions()
+		appState$AllLeagues <- appState$SportController$get_competitions()
 
 		output$ddlCountry <- renderUI({
 			selectInput(ns('CountryCode'), 'Countries', appState$CountryOptions)
@@ -77,10 +76,10 @@ competitionChooser <- function(input, output, session, appState){
 			appState$SelectedCountryCode <- input$CountryCode
 
 			countryLeagues <- appState$AllLeagues %>%
-				filter((input$CountryCode == country_code | (input$CountryCode == worldCountryCode & country == 'World')) & is_current == 1 & toupper(type) == 'LEAGUE') %>%
-				arrange(season, name)
-			leagueDdlOptions <- c(notSelectedVal, as.list(countryLeagues$league_id))
-			leagueDdlOptionNames <- c('Select League...', as.list(paste0(countryLeagues$season, ' - ', countryLeagues$name, ' (', countryLeagues$league_id, ')')))
+				filter(input$CountryCode == CountryCode) %>%
+				arrange(LeagueSeason, LeagueName)
+			leagueDdlOptions <- c(notSelectedVal, as.list(countryLeagues$LeagueId))
+			leagueDdlOptionNames <- c('Select League...', as.list(countryLeagues$DisplayName))
 			names(leagueDdlOptions) <- leagueDdlOptionNames
 			appState$LeagueOptions <- leagueDdlOptions
 
@@ -159,8 +158,8 @@ competitionChooser <- function(input, output, session, appState){
 			appState$LeaguePredModel <- ensemblePredModel
 
 			countryGroupData <- appState$CountryGroups %>% filter(CountryCode == appState$SelectedCountryCode) %>% top_n(1)
-			leagueData <- appState$AllLeagues %>% filter(league_id == appState$SelectedLeagueId) %>% slice(1)
-			leagueDisplayHtml <- paste0('<span class="h3" style="background-color:#EEEEEE; padding: 5px; height: 60px; display:inline-block;"><img src="', leagueData$flag,'" height="50" />&nbsp;&nbsp;', leagueData$country,' - ', leagueData$season, ' ', leagueData$name, ' (', leagueData$season_start, ' to ', leagueData$season_end, ')</span>')
+			leagueData <- appState$AllLeagues %>% filter(LeagueId == appState$SelectedLeagueId) %>% slice(1)
+			leagueDisplayHtml <- paste0('<span class="h3" style="background-color:#EEEEEE; padding: 5px; height: 60px; display:inline-block;"><img src="', leagueData$FlagUrl,'" height="50" />&nbsp;&nbsp;', leagueData$Country,' - ', leagueData$DisplayName, ' (', leagueData$SeasonStart, ' to ', leagueData$SeasonEnd, ')</span>')
 			appState$LeagueTitleDisplayHtml <- leagueDisplayHtml
 		}
 	})
