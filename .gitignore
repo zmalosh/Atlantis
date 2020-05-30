@@ -5,3 +5,6 @@
 
 # Shiny IO Publish data
 *.dcf
+
+# API Keys
+*.key
