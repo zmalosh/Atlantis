@@ -7,6 +7,6 @@ get_api_baseball_json_from_url <- function(url){
 
 	response <- httr::GET(url, add_headers(.headers = headers))
 	rawJson <- httr::content(response, as = 'text')
-	json <- jsonlite::fromJSON(rawJson)$api
+	json <- jsonlite::fromJSON(rawJson)$response
 	return (json)
 }
