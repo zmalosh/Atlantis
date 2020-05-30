@@ -3,6 +3,8 @@ get_league_games <- function(leagueId){
 		return(NULL)
 	}
 
+	source('src/sports/soccer/api/get_games_by_league_id.R')
+
 	rawGames <- get_games_by_league_id(leagueId)
 
 	gameTimes <- ymd_hms(rawGames$event_date) %>% with_tz('America/Detroit')
