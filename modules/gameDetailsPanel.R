@@ -1,5 +1,4 @@
 source('requirements.R')
-source('src/sports/soccer/get_game_details.R')
 
 getGamePredictions <- function(predModel, homeTeamId, awayTeamId, isNeutralSite, homeSpread = 0){
 	pctDecimalPlaces <- 3
@@ -44,10 +43,10 @@ gameDetailsPanel <- function(input, output, session, appState){
 	ns <- session$ns
 
 	observe({
-		if(!is.null(appState) && !is.null(appState$SelectedGameId)){
+		if(!is.null(appState) && !is.null(appState$SportController) && !is.null(appState$SelectedGameId)){
 			output$txtSelectedGameId <- renderText(paste0('GameId: ', appState$SelectedGameId))
 
-			rawGameDetails <- get_game_details(appState$SelectedGameId)
+			rawGameDetails <- appState$SportController$get_game_details(appState$SelectedGameId)
 
 			appState$SelectedGameDetails <- rawGameDetails
 			appState$SelectedHomeTeam <- rawGameDetails$HomeTeam

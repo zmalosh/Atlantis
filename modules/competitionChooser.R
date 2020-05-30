@@ -1,10 +1,5 @@
 source('requirements.R')
-source('src/sports/soccer/api/get_games_by_league_id.R')
-source('src/sports/soccer/get_country_groups.R')
-source('src/sports/soccer/get_league_games.R')
-source('src/sports/soccer/get_league_standings.R')
-source('src/sports/soccer/get_league_odds.R')
-source('src/sports/soccer/get_bookmakers.R')
+source('src/sports/sport_controller_factory.R')
 source('src/sports/soccer/api/get_all_competitions.R')
 
 competitionChooserUI <- function(id){
@@ -38,7 +33,8 @@ competitionChooser <- function(input, output, session, appState){
 	})
 
 	observeEvent(input$SportName, {
-		bookmakers <- get_bookmakers() %>% arrange(BookmakerName)
+		appState$SportController <- sport_controller_factory(input$SportName)
+		bookmakers <- appState$SportController$get_bookmakers() %>% arrange(BookmakerName)
 		bookmakerDdlOptions <- as.list(bookmakers$BookmakerName)
 		names(bookmakerDdlOptions) <- bookmakers$BookmakerName
 
@@ -49,12 +45,13 @@ competitionChooser <- function(input, output, session, appState){
 			selectInput(ns('BookmakerName'), 'Bookmakers', bookmakerDdlOptions, selected = defaultBookmaker)
 		})
 
-		countryGroups <- get_country_groups() %>% arrange(GroupPriority, CountryPriority, CountryName)
+		countryGroups <- appState$SportController$get_country_groups() %>% arrange(GroupPriority, CountryPriority, CountryName)
+		appState$CountryGroups <- countryGroups
 		countryDdlOptions <- c(notSelectedVal, as.list(countryGroups$CountryCode))
 		names(countryDdlOptions) <- c('Select Country...', as.list(paste(countryGroups$GroupName, '-', countryGroups$CountryName)))
 		appState$CountryOptions <- countryDdlOptions
 
-		allLeagues <- get_all_competitions()
+		appState$AllLeagues <- get_all_competitions()
 
 		output$ddlCountry <- renderUI({
 			selectInput(ns('CountryCode'), 'Countries', appState$CountryOptions)
@@ -62,6 +59,7 @@ competitionChooser <- function(input, output, session, appState){
 	})
 
 	observeEvent(input$BookmakerName, {
+		bookmakers <- appState$Bookmakers
 		appState$SelectedBookmaker <- bookmakers %>% filter(BookmakerName == input$BookmakerName) %>% slice(1)
 	})
 
@@ -78,7 +76,7 @@ competitionChooser <- function(input, output, session, appState){
 		} else {
 			appState$SelectedCountryCode <- input$CountryCode
 
-			countryLeagues <- allLeagues %>%
+			countryLeagues <- appState$AllLeagues %>%
 				filter((input$CountryCode == country_code | (input$CountryCode == worldCountryCode & country == 'World')) & is_current == 1 & toupper(type) == 'LEAGUE') %>%
 				arrange(season, name)
 			leagueDdlOptions <- c(notSelectedVal, as.list(countryLeagues$league_id))
@@ -112,10 +110,10 @@ competitionChooser <- function(input, output, session, appState){
 			appState$LeagueGames <- NULL
 			output$dtGames <- NULL
 		} else {
-			currentRound <- get_current_round_by_league_id(appState$SelectedLeagueId)
-			rawGames <- get_league_games(isolate(appState$SelectedLeagueId))
-			rawStandings <- get_league_standings(isolate(appState$SelectedLeagueId))
-			rawOdds <- get_league_odds(isolate(appState$SelectedLeagueId))
+			currentRound <- appState$SportController$get_current_period(appState$SelectedLeagueId)
+			rawGames <- appState$SportController$get_league_games(isolate(appState$SelectedLeagueId))
+			rawStandings <- appState$SportController$get_league_standings(isolate(appState$SelectedLeagueId))
+			rawOdds <- appState$SportController$get_league_odds(isolate(appState$SelectedLeagueId))
 
 			ensemblePredModel <- SportPredictR::ensemble_model(gameIds =  rawGames$GameId,
 													   homeTeamIds = rawGames$HomeTeam,
@@ -160,8 +158,8 @@ competitionChooser <- function(input, output, session, appState){
 			appState$LeagueOdds <- rawOdds
 			appState$LeaguePredModel <- ensemblePredModel
 
-			countryGroupData <- countryGroups %>% filter(CountryCode == appState$SelectedCountryCode) %>% top_n(1)
-			leagueData <- allLeagues %>% filter(league_id == appState$SelectedLeagueId) %>% slice(1)
+			countryGroupData <- appState$CountryGroups %>% filter(CountryCode == appState$SelectedCountryCode) %>% top_n(1)
+			leagueData <- appState$AllLeagues %>% filter(league_id == appState$SelectedLeagueId) %>% slice(1)
 			leagueDisplayHtml <- paste0('<span class="h3" style="background-color:#EEEEEE; padding: 5px; height: 60px; display:inline-block;"><img src="', leagueData$flag,'" height="50" />&nbsp;&nbsp;', leagueData$country,' - ', leagueData$season, ' ', leagueData$name, ' (', leagueData$season_start, ' to ', leagueData$season_end, ')</span>')
 			appState$LeagueTitleDisplayHtml <- leagueDisplayHtml
 		}

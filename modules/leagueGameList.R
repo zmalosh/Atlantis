@@ -1,5 +1,4 @@
 library(tidyverse)
-source('src/sports/soccer/api/get_current_round_by_league_id.R')
 
 leagueGameListUI <- function(id){
 	ns <- NS(id)
