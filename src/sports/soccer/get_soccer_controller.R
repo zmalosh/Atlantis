@@ -14,7 +14,7 @@ get_soccer_controller <- function(){
 		'get_league_games' = get_league_games,
 		'get_league_odds' = get_league_odds,
 		'get_league_standings' = get_league_standings,
-		'get_current_period' = get_current_round_by_league_id
+		'get_current_round' = get_current_round_by_league_id
 	)
 
 	return(ctrl)

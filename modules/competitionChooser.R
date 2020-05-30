@@ -110,7 +110,7 @@ competitionChooser <- function(input, output, session, appState){
 			appState$LeagueGames <- NULL
 			output$dtGames <- NULL
 		} else {
-			currentRound <- appState$SportController$get_current_period(appState$SelectedLeagueId)
+			currentRound <- appState$SportController$get_current_round(appState$SelectedLeagueId)
 			rawGames <- appState$SportController$get_league_games(isolate(appState$SelectedLeagueId))
 			rawStandings <- appState$SportController$get_league_standings(isolate(appState$SelectedLeagueId))
 			rawOdds <- appState$SportController$get_league_odds(isolate(appState$SelectedLeagueId))
