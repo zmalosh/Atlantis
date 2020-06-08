@@ -140,16 +140,17 @@ competitionChooser <- function(input, output, session, appState){
 				stringsAsFactors = FALSE
 			)
 
-			if(!is.null(rawOdds)){
-				gameMoneyLines <- rawOdds %>%
-					filter(BetTypeName == 'Match Winner' & BookmakerName == appState$SelectedBookmaker$BookmakerName) %>%
-					pivot_wider(names_from = BetName, values_from = DecimalValue) %>%
-					transform(HomeMoneyLine = as.numeric(Home), DrawMoneyLine = as.numeric(Draw), AwayMoneyLine = as.numeric(Away)) %>%
-					select(-c(Home, Draw, Away, BetTypeName, BookmakerName))
-				leagueGames <- leagueGames %>% left_join(gameMoneyLines, by = 'GameId')
-			} else {
-				leagueGames <- cbind(leagueGames, HomeMoneyLine = NA, DrawMoneyLine = NA, AwayMoneyLine = NA)
-			}
+			# REMOVE BOOKMAKER FOR NOW
+			# if(!is.null(rawOdds)){
+			# 	gameMoneyLines <- rawOdds %>%
+			# 		filter(BetTypeName == 'Match Winner' & BookmakerName == appState$SelectedBookmaker$BookmakerName) %>%
+			# 		pivot_wider(names_from = BetName, values_from = DecimalValue) %>%
+			# 		transform(HomeMoneyLine = as.numeric(Home), DrawMoneyLine = as.numeric(Draw), AwayMoneyLine = as.numeric(Away)) %>%
+			# 		select(-c(Home, Draw, Away, BetTypeName, BookmakerName))
+			# 	leagueGames <- leagueGames %>% left_join(gameMoneyLines, by = 'GameId')
+			# } else {
+			# 	leagueGames <- cbind(leagueGames, HomeMoneyLine = NA, DrawMoneyLine = NA, AwayMoneyLine = NA)
+			# }
 
 			appState$CurrentLeagueRound <- currentRound
 			appState$LeagueGames <- leagueGames
