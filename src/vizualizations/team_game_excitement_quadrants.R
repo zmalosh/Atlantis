@@ -45,10 +45,10 @@ team_game_excitement_quadrants <- function(homeTeamIds, awayTeamIds, homeScores,
 		) +
 		xlab('Avg Game Total') +
 		ylab('Avg Absolute Game Score Difference') +
-		annotation_custom(grobTree(textGrob('Electric', x = 0.95, y = 0.95, gp = gpar(col = ql.col, fontsize = ql.sz, alpha = ql.alpha)))) +
-		annotation_custom(grobTree(textGrob('Tactical', x = 0.05, y = 0.05, gp = gpar(col = ql.col, fontsize = ql.sz, alpha = ql.alpha)))) +
-		annotation_custom(grobTree(textGrob('Slaughter', x = 0.95, y = 0.05, gp = gpar(col = ql.col, fontsize = ql.sz, alpha = ql.alpha)))) +
-		annotation_custom(grobTree(textGrob('Grind', x = 0.05, y = 0.95, gp = gpar(col = ql.col, fontsize = ql.sz, alpha = ql.alpha)))) +
+		annotation_custom(grobTree(textGrob('Electric', x = 0.95, y = 0.05, gp = gpar(col = ql.col, fontsize = ql.sz, alpha = ql.alpha)))) +
+		annotation_custom(grobTree(textGrob('Tactical', x = 0.05, y = 0.95, gp = gpar(col = ql.col, fontsize = ql.sz, alpha = ql.alpha)))) +
+		annotation_custom(grobTree(textGrob('Slaughter', x = 0.95, y = 0.95, gp = gpar(col = ql.col, fontsize = ql.sz, alpha = ql.alpha)))) +
+		annotation_custom(grobTree(textGrob('Grind', x = 0.05, y = 0.05, gp = gpar(col = ql.col, fontsize = ql.sz, alpha = ql.alpha)))) +
 		theme_fivethirtyeight(base_size = 10, base_family = 'sans') +
 		scale_color_fivethirtyeight() +
 		theme(axis.title = element_text())
