@@ -40,7 +40,7 @@ team_game_excitement_quadrants <- function(homeTeamIds, awayTeamIds, homeScores,
 		scale_x_continuous(breaks = seq(from = 0, to = 200, by = 0.25)) +
 		scale_y_continuous(breaks = seq(from = 0, to = 200, by = 0.25), trans = 'reverse') +
 		labs(
-			title = 'Game Excitment: Scoring Frequency vs Game Closeness',
+			title = 'Game Excitment: Game Total vs Game Margin',
 			subtitle = paste('Average Game Total:', avgScoreTotalLabel, '- Average Game Margin:', avgScoreDiffLabel)
 		) +
 		xlab('Average Game Total') +

@@ -1,6 +1,8 @@
 require(ggplot2)
 require(ggimage)
 require(ggthemes)
+require(grid)
+require(gridExtra)
 
 team_quality_quadrants <- function(homeTeamIds, awayTeamIds, homeScores, awayScores, homeLogoUrls, awayLogoUrls){
 	teamGames <- data.frame(Team = c(homeTeamIds, awayTeamIds),

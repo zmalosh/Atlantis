@@ -22,10 +22,14 @@ ui <- fluidPage(
 		htmlOutput('titleLeaguePanel', escape = FALSE),
 		tabsetPanel(id = 'tabsLeague',
 			tabPanel('Games',
-				leagueGameListUI('leagueGameListElement')
+					 leagueGameListUI('leagueGameListElement')
 			),
 			tabPanel('Standings',
-				leagueStandingsUI('leagueStandingsElement')
+					 leagueStandingsUI('leagueStandingsElement')
+			),
+			tabPanel('Quadrants',
+					 imageOutput('imgTeamQualityQuads'),
+					 imageOutput('imgTeamGameExcitementQuads'),
 			)
 		)
 	),
@@ -33,6 +37,20 @@ ui <- fluidPage(
 		gameDetailsPanelUI('gameDetailsPanelElement')
 	)
 )
+
+minTeamGamesPlayed <- function(leagueGames){
+	teamGameCounts <- leagueGames %>%
+		filter(!is.na(HomeScore)) %>%
+		group_by(HomeTeam) %>%
+		summarise(HomeGames = n()) %>%
+		full_join(leagueGames %>%
+				  	filter(!is.na(HomeScore)) %>%
+				  	group_by(AwayTeam) %>%
+				  	summarise(AwayGames = n()), by = c('HomeTeam' = 'AwayTeam')) %>%
+		mutate(Games = coalesce(HomeGames, 0L) + coalesce(AwayGames, 0L))
+	minGameCount <- min(teamGameCounts$Games)
+	return(minGameCount)
+}
 
 server <- function(input, output, session) {
 
@@ -61,6 +79,50 @@ server <- function(input, output, session) {
 		# HTML TITLE
 		if(!is.null(appState) && !is.null(appState$LeagueGames) && !is.null(appState$LeagueTitleDisplayHtml)){
 			output$titleLeaguePanel <- renderUI(HTML(appState$LeagueTitleDisplayHtml))
+		}
+	})
+
+	observe({
+		if(!is.null(appState) && !is.null(appState$SelectedLeagueId) && !is.null(appState$LeagueGames) && minTeamGamesPlayed(appState$LeagueGames)){
+			source('src/vizualizations/team_quality_quadrants.R')
+			source('src/vizualizations/team_game_excitement_quadrants.R')
+			vizGames <- isolate(appState$LeagueGames %>% filter(!is.na(HomeScore) & !is.na(AwayScore)))
+			imgTeamQualityQuads <- team_quality_quadrants(homeTeamIds = vizGames$HomeTeam,
+														  awayTeamIds = vizGames$AwayTeam,
+														  homeScores = vizGames$HomeScore,
+														  awayScores = vizGames$AwayScore,
+														  homeLogoUrls = vizGames$HomeTeamLogoUrl,
+														  awayLogoUrls = vizGames$AwayTeamLogoUrl)
+			teamQualityFileName <- paste0('teamQuads_quality_', appState$SelectedLeagueId, '.png')
+			if(!file.exists(teamQualityFileName) || file.info(teamQualityFileName)$mtime < lubridate::now() - minutes(15)){
+				ggsave(teamQualityFileName, imgTeamQualityQuads)
+			}
+			output$imgTeamQualityQuads <- renderImage({
+				filename <- normalizePath(teamQualityFileName)
+				list(src = filename,
+					 width = 500,
+					 height = 375)
+			}, deleteFile =  FALSE)
+
+			imgTeamGameExcitementQuads <- team_game_excitement_quadrants(homeTeamIds = vizGames$HomeTeam,
+														  awayTeamIds = vizGames$AwayTeam,
+														  homeScores = vizGames$HomeScore,
+														  awayScores = vizGames$AwayScore,
+														  homeLogoUrls = vizGames$HomeTeamLogoUrl,
+														  awayLogoUrls = vizGames$AwayTeamLogoUrl)
+			teamGameExcitementFileName <- paste0('teamQuads_gameExcitement_', appState$SelectedLeagueId, '.png')
+			if(!file.exists(teamGameExcitementFileName) || file.info(teamGameExcitementFileName)$mtime < lubridate::now() - minutes(15)){
+				ggsave(teamGameExcitementFileName, imgTeamGameExcitementQuads)
+			}
+			output$imgTeamGameExcitementQuads <- renderImage({
+				filename <- normalizePath(teamGameExcitementFileName)
+				list(src = filename,
+					 width = 500,
+					 height = 375)
+			}, deleteFile =  FALSE)
+		} else {
+			output$imgTeamQualityQuads <- NULL
+			output$imgTeamGameExcitementQuads <- NULL
 		}
 	})
 }
