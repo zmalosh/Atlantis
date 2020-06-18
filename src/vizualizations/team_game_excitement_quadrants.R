@@ -38,13 +38,13 @@ team_game_excitement_quadrants <- function(homeTeamIds, awayTeamIds, homeScores,
 		geom_hline(yintercept = avgLeagueScoreDiff, color = 'blue', size = rl.size) +
 		coord_fixed(ratio = 1) +
 		scale_x_continuous(breaks = seq(from = 0, to = 200, by = 0.25)) +
-		scale_y_continuous(breaks = seq(from = 0, to = 200, by = 0.25), trans = 'reverse') +
+		scale_y_continuous(breaks = seq(from = 0, to = 200, by = 0.25)) +
 		labs(
 			title = 'Game Excitment: Game Total vs Game Margin',
-			subtitle = paste('Average Game Total:', avgScoreTotalLabel, '- Average Game Margin:', avgScoreDiffLabel)
+			subtitle = paste('Avg Game Total:', avgScoreTotalLabel, '- Avg Game Margin:', avgScoreDiffLabel)
 		) +
-		xlab('Average Game Total') +
-		ylab('Average Absolute Game Score Difference (desc)') +
+		xlab('Avg Game Total') +
+		ylab('Avg Absolute Game Score Difference') +
 		annotation_custom(grobTree(textGrob('Electric', x = 0.95, y = 0.95, gp = gpar(col = ql.col, fontsize = ql.sz, alpha = ql.alpha)))) +
 		annotation_custom(grobTree(textGrob('Tactical', x = 0.05, y = 0.05, gp = gpar(col = ql.col, fontsize = ql.sz, alpha = ql.alpha)))) +
 		annotation_custom(grobTree(textGrob('Slaughter', x = 0.95, y = 0.05, gp = gpar(col = ql.col, fontsize = ql.sz, alpha = ql.alpha)))) +

@@ -27,8 +27,10 @@ ui <- fluidPage(
 			tabPanel('Standings',
 					 leagueStandingsUI('leagueStandingsElement')
 			),
-			tabPanel('Quadrants',
+			tabPanel('Quality Quads',
 					 imageOutput('imgTeamQualityQuads'),
+			),
+			tabPanel('Excitement Quads',
 					 imageOutput('imgTeamGameExcitementQuads'),
 			)
 		)
@@ -95,13 +97,16 @@ server <- function(input, output, session) {
 														  awayLogoUrls = vizGames$AwayTeamLogoUrl)
 			teamQualityFileName <- paste0('teamQuads_quality_', appState$SelectedLeagueId, '.png')
 			if(!file.exists(teamQualityFileName) || file.info(teamQualityFileName)$mtime < lubridate::now() - minutes(15)){
-				ggsave(teamQualityFileName, imgTeamQualityQuads)
+				ggsave(teamQualityFileName,
+					   imgTeamQualityQuads,
+					   width = 8,
+					   height = 6)
 			}
 			output$imgTeamQualityQuads <- renderImage({
 				filename <- normalizePath(teamQualityFileName)
 				list(src = filename,
-					 width = 500,
-					 height = 375)
+					 width = 800,
+					 height = 600)
 			}, deleteFile =  FALSE)
 
 			imgTeamGameExcitementQuads <- team_game_excitement_quadrants(homeTeamIds = vizGames$HomeTeam,
@@ -112,13 +117,16 @@ server <- function(input, output, session) {
 														  awayLogoUrls = vizGames$AwayTeamLogoUrl)
 			teamGameExcitementFileName <- paste0('teamQuads_gameExcitement_', appState$SelectedLeagueId, '.png')
 			if(!file.exists(teamGameExcitementFileName) || file.info(teamGameExcitementFileName)$mtime < lubridate::now() - minutes(15)){
-				ggsave(teamGameExcitementFileName, imgTeamGameExcitementQuads)
+				ggsave(teamGameExcitementFileName,
+					   imgTeamGameExcitementQuads,
+					   width = 8,
+					   height = 6)
 			}
 			output$imgTeamGameExcitementQuads <- renderImage({
 				filename <- normalizePath(teamGameExcitementFileName)
 				list(src = filename,
-					 width = 500,
-					 height = 375)
+					 width = 800,
+					 height = 600)
 			}, deleteFile =  FALSE)
 		} else {
 			output$imgTeamQualityQuads <- NULL
