@@ -6,15 +6,16 @@ Post-Covid,	1,	4,	IT
 Post-Covid,	1,	4,	PT
 Post-Covid,	1,	4,	RU
 Post-Covid,	1,	4,	TR
-Post-Covid,	1,	5,	EC
+Post-Covid,	1,	4,	EC
+Post-Covid,	1,	4,	KR
+Post-Covid,	1,	4,	MX
+Post-Covid,	1,	4,	US
+Post-Covid,	1,	4,	AR
+Post-Covid,	1,	4,	NI
 Post-Covid,	1,	5,	JP
 Post-Covid,	1,	5,	AU
 Post-Covid,	1,	5,	HR
 Post-Covid,	1,	5,	IS
-Post-Covid,	1,	5,	KR
-Post-Covid,	1,	5,	MX
-Post-Covid,	1,	5,	US
-Post-Covid,	1,	5,	AR
 Post-Covid,	1,	5,	SE
 Europe,		2,	4,	DE
 Europe,		2,	4,	ES
@@ -43,4 +44,4 @@ Asia,		5,	4,	KR
 Asia,		5,	5,	HK
 Asia,		5,	5,	SA
 Asia,		5,	5,	TJ
-Asia,		5,	5,	AU
+Asia,		5,	4,	AU
